@@ -1,5 +1,5 @@
 # StraxCLI
-CLI for Strax Wallet. Plea
+CLI for Strax Wallet. 
 
 Please checkout < not released > for instructions how to you use!
 

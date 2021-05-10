@@ -1,5 +1,5 @@
 """
-Version: 1.0.1
+Version: 1.0.0
 Author: Velocity-plus
 Github: https://github.com/Velocity-plus
 Date: 10-05-2021
@@ -11,6 +11,7 @@ from time import sleep
 from interface.node import NodeAPI
 from interface.node import Caching
 from interface.node import TempData
+from getpass import getpass
 
 Data = TempData()
 Cache = Caching(Data.temp_mem)
@@ -20,12 +21,13 @@ Node = NodeAPI(Data.temp_mem)
 
 class StraxCLI:
     def __init__(self, data):
-        Node.get_latest_block()
         self.temp_data = data
+        self.startup = True
 
     def input_prompt_pass(self):
-        walletPasswd = input("Password: ")
-        walletPasswdConf = input("Re-type password: ")
+        print("< Please note that characters are invisible when typed")
+        walletPasswd = getpass("Password: ")
+        walletPasswdConf = getpass("Re-type password: ")
         if walletPasswd != walletPasswdConf:
             print("Password didn't match, please try again.")
             self.input_prompt_pass()
@@ -33,8 +35,9 @@ class StraxCLI:
         self.temp_data['password'] = walletPasswdConf
 
     def input_prompt_ph(self):
-        walletPh = input("Passphrase: ")
-        walletPhConf = input("Re-type passphrase: ")
+        print("< Please note that characters are invisible when typed")
+        walletPh = getpass("Passphrase: ")
+        walletPhConf = getpass("Re-type passphrase: ")
         if walletPh != walletPhConf:
             print("Passphrase didn't match, please try again.")
             self.input_prompt_ph()
@@ -50,6 +53,10 @@ class StraxCLI:
     def cli_start(self):
         print(" ")
         print("> Checking StraxNode connection...")
+        if self.startup:
+            Node.get_latest_block()
+            self.startup = False
+
         if Node.is_node_alive()['alive']:
             print("> StraxNode is: Online... Menu initializing.. \n ")
             sleep(1)
@@ -57,6 +64,7 @@ class StraxCLI:
         else:
             print("> StraxNode is offline, please start the StraxNode")
             print("> CMD: sudo screen dotnet ~/StraxNode/Stratis.StraxD.dll run -mainnet")
+            Cache.quit()
 
     def cli_display(self):
 
@@ -162,13 +170,12 @@ class StraxCLI:
         print("> Please fill out the fields below:")
         walletName = input("Wallet Name: ")
         date = input("Date yy-mm-dd: ")
-        print("< Re-syncing you transactions from %s to present." % date )
+        print("< Re-syncing you transactions from %s to present." % date)
         sync_from = Node.action_sync_from_date(date, True, walletName)
         if sync_from['succes']:
             print("Syncing started! Nice.")
         else:
             print("Something went wrong, please try again. Error code: %s" % sync_from['code'])
-
 
     def question_recover_wallet(self):
         print("> Recover Wallet...")
@@ -189,7 +196,8 @@ class StraxCLI:
             if sync_tran['succes']:
                 print("< Syncing started! Great.")
             else:
-                print("< Could not sync your transactions, you will have re-sync in the main menu. Error code: %s" % sync_tran['code'])
+                print("< Could not sync your transactions, you will have re-sync in the main menu. Error code: %s" %
+                      sync_tran['code'])
             print("< Loading main menu, please wait...")
             sleep(5)
 
@@ -210,8 +218,7 @@ class StraxCLI:
             print("> Operation cancelled!")
 
 
-print(">>>> Please check https://github.com/Miew-Software/StraxCLI/releases for updates or the guide <<<")
-print(">>>> Current Version: 1.0.1 <<<< ")
-
+print(">>>> Please check https://github.com/stratisproject/StraxCLI/releases for updates or the guide <<<")
+print(">>>> Current Version: 1.0.0 <<<< ")
 StraxCLI = StraxCLI(Data.temp_mem)
 StraxCLI.cli_start()

@@ -1,5 +1,5 @@
 """
-Version: 1.0.1
+Version: 1.0.0
 Author: Velocity-plus
 Github: https://github.com/Velocity-plus
 Date: 10-05-2021
@@ -14,6 +14,7 @@ from time import sleep
 
 API_URL = "http://localhost:17103"
 API_URL_EXTERNAL = "https://strax.miew.org/api/1.0/stratis/getblockcount"
+
 
 class TempData:
     def __init__(self):
@@ -222,16 +223,19 @@ class NodeAPI:
             return {'succes': False, 'data': r.content, 'msg': None, 'code': r.status_code}
 
     def get_sync_info(self):
-        call_gbc = self.get_block_count()
-        cBlock = int(call_gbc['count'])
-        lBlock = int(self.temp_mem['latest_block'])
-        ratio = round((cBlock / lBlock) * 100, 2)
-        if lBlock != -1:
-            if cBlock > lBlock:
-                return "%s/%s (100%%)" % (cBlock, cBlock)
-            return "%s/%s (%s%%)" % (cBlock, lBlock, ratio)
+        try:
+            call_gbc = self.get_block_count()
+            cBlock = int(call_gbc['count'])
+            lBlock = int(self.temp_mem['latest_block'])
+            ratio = round((cBlock / lBlock) * 100, 2)
+            if lBlock != -1:
+                if cBlock > lBlock:
+                    return "%s/%s (100%%)" % (cBlock, cBlock)
+                return "%s/%s (%s%%)" % (cBlock, lBlock, ratio)
 
-        return "%s (??%%)" % cBlock
+            return "%s (??%%)" % cBlock
+        except:
+            return "??, please refresh"
 
     def get_wallets(self):
         return "".join([w + " " for w in self.temp_mem['wallets']])

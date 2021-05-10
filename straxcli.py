@@ -162,6 +162,10 @@ class StraxCLI:
         print("< Retrieving balance for wallet: %s..." % walletName)
         balance = Node.get_balance(walletName)
         if balance['succes']:
+            is_synced = Node.is_fully_synced()
+            if not is_synced['synced']:
+                print("> NOTE: You are not fully synced with network, your current amount might not be accurate!")
+                print("> Sync progression: b: %s" % Node.get_sync_info())
             print("> Your balance is %s STRAX (Confirmed)" % balance['amount'])
         else:
             print("Something went wrong, please try again. Error code: %s" % balance['code'])
@@ -185,7 +189,7 @@ class StraxCLI:
         self.input_prompt_ph()
         walletname = input("Enter any wallet name: ")
         creationDate = input("Creation date yy-mm-dd: ")
-        print("< Recovering wallet...")
+        print("< Recovering wallet... (this can take a while)..")
         recover = Node.action_recover_wallet(mnemoic, self.temp_data['password'], self.temp_data['passphrase'],
                                              walletname, creationDate)
         if recover['succes']:

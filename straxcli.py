@@ -202,7 +202,7 @@ class StraxCLI:
         if recover['succes']:
             print("< Wallet recovered succesfully with alias: %s" % walletname)
             print("> Syncing your wallet transactions, please wait")
-            sleep(3)
+            sleep(8)
             sync_tran = Node.action_sync_from_date(creationDate, True, walletname)
             if sync_tran['succes']:
                 print("< Syncing started! Great.")
@@ -210,7 +210,7 @@ class StraxCLI:
                 print("< Could not sync your transactions, you will have re-sync in the main menu. Error code: %s" %
                       sync_tran['code'])
             print("< Loading main menu, please wait...")
-            sleep(5)
+            sleep(8)
 
         else:
             print("< Something went wrong, please try recovering your wallet again. Error code: %s" % recover['code'])
@@ -230,20 +230,20 @@ class StraxCLI:
 
 
 def _StraxCLIvCheck():
-    print(">>>>> Checking for new version... <<<<<")
+    print(">>> Checking for new version... <<<")
     subs = API_URL_VERSION_CHECK
     try:
-        r = requests.get(subs, timeout=3)
+        r = requests.get(subs, timeout=6)
         if r.status_code == 200:
             js = json.loads(r.content)
             latest_version = js['latest_version']
             latest_msg = js["latest_msg"]
-            if latest_version == latest_version:
-                print(">>>>>> You are running the latest version: %s <<<<<<<" % VERSION)
+            if latest_version == VERSION:
+                print(">>> You are running the latest version: %s <<<" % VERSION)
                 if latest_msg != '':
                     print(latest_msg)
             else:
-                print(">>>>>> There is a new version available for StraxCLI: %s -> %s <<<<<<<" % (
+                print(">>> There is a new version available for StraxCLI: %s -> %s <<<" % (
                 VERSION, latest_version))
                 print("> Please make sure you are always running the latest version")
                 print("> You can download new releases from https://github.com/stratisproject/StraxCLI/releases")

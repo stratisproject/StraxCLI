@@ -43,8 +43,8 @@ class Caching(Thread):
         super().__init__()
         self.temp_mem = data
         self.running = True
-        self.pause = 10
-        self.frac = 8
+        self.pause = 30
+        self.frac = 10
 
     def run(self):
         while self.running:

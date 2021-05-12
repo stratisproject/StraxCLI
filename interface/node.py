@@ -19,8 +19,6 @@ API_URL_VERSION_CHECK = "https://strax.miew.org/api/1.0/stratis/straxcli"
 
 class TempData:
     def __init__(self):
-        self.version = ""
-        self.msg = ""
         self.temp_mem = {'password': '',
                          'passphrase': '',
                          'walletname': '',

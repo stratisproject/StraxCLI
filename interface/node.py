@@ -13,11 +13,13 @@ from threading import Thread
 from time import sleep
 
 API_URL = "http://localhost:17103"
-API_URL_EXTERNAL = "https://strax.miew.org/api/1.0/stratis/getblockcount"
+API_URL_EXTERNAL = "https://strax.miew.org/api/1.0/stratis/straxcli"
 
 
 class TempData:
     def __init__(self):
+        self.version = ""
+        self.msg = ""
         self.temp_mem = {'password': '',
                          'passphrase': '',
                          'walletname': '',

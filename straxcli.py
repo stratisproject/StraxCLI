@@ -11,7 +11,7 @@ from time import sleep
 from interface.node import NodeAPI
 from interface.node import Caching
 from interface.node import TempData
-from interface.node import API_URL
+from interface.node import API_URL_VERSION_CHECK
 from getpass import getpass
 import requests
 from requests import exceptions
@@ -231,7 +231,7 @@ class StraxCLI:
 
 def _StraxCLIvCheck():
     print(">>>>> Checking for new version... <<<<<")
-    subs = API_URL
+    subs = API_URL_VERSION_CHECK
     try:
         r = requests.get(subs, timeout=3)
         if r.status_code == 200:

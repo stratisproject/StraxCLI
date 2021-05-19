@@ -14,6 +14,7 @@ from time import sleep
 
 API_URL = "http://localhost:17103"
 API_URL_EXTERNAL = "https://strax.miew.org/api/1.0/stratis/getblockcount"
+API_URL_VERSION_CHECK = "https://strax.miew.org/api/1.0/stratis/straxcli"
 
 
 class TempData:
@@ -40,8 +41,8 @@ class Caching(Thread):
         super().__init__()
         self.temp_mem = data
         self.running = True
-        self.pause = 10
-        self.frac = 8
+        self.pause = 30
+        self.frac = 10
 
     def run(self):
         while self.running:

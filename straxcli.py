@@ -11,12 +11,18 @@ from time import sleep
 from interface.node import NodeAPI
 from interface.node import Caching
 from interface.node import TempData
+from interface.node import API_URL_VERSION_CHECK
 from getpass import getpass
+import requests
+from requests import exceptions
+import json
 
 Data = TempData()
 Cache = Caching(Data.temp_mem)
 Cache.start()
 Node = NodeAPI(Data.temp_mem)
+
+VERSION = "1.0.0"
 
 
 class StraxCLI:
@@ -35,14 +41,15 @@ class StraxCLI:
         self.temp_data['password'] = walletPasswdConf
 
     def input_prompt_ph(self):
-        print("< Please note that characters are invisible when typed")
+        print("< Please note that characters are invisible when typed.")
+        print("< If you have no passphrase for your wallet, press enter for blank.")
         walletPh = getpass("Passphrase: ")
-        walletPhConf = getpass("Re-type passphrase: ")
-        if walletPh != walletPhConf:
-            print("Passphrase didn't match, please try again.")
-            self.input_prompt_ph()
-
-        self.temp_data['passphrase'] = walletPh
+        if walletPh != '':
+            walletPhConf = getpass("Re-type passphrase: ")
+            if walletPh != walletPhConf:
+                print("Passphrase didn't match, please try again.")
+                self.input_prompt_ph()
+            self.temp_data['passphrase'] = walletPh
 
     def input_temp_info(self):
         if self.temp_data['walletname'] == '' and self.temp_data['password'] == '':
@@ -195,7 +202,7 @@ class StraxCLI:
         if recover['succes']:
             print("< Wallet recovered succesfully with alias: %s" % walletname)
             print("> Syncing your wallet transactions, please wait")
-            sleep(3)
+            sleep(8)
             sync_tran = Node.action_sync_from_date(creationDate, True, walletname)
             if sync_tran['succes']:
                 print("< Syncing started! Great.")
@@ -203,7 +210,7 @@ class StraxCLI:
                 print("< Could not sync your transactions, you will have re-sync in the main menu. Error code: %s" %
                       sync_tran['code'])
             print("< Loading main menu, please wait...")
-            sleep(5)
+            sleep(8)
 
         else:
             print("< Something went wrong, please try recovering your wallet again. Error code: %s" % recover['code'])
@@ -222,7 +229,30 @@ class StraxCLI:
             print("> Operation cancelled!")
 
 
-print(">>>> Please check https://github.com/stratisproject/StraxCLI/releases for updates or the guide <<<")
-print(">>>> Current Version: 1.0.0 <<<< ")
+def _StraxCLIvCheck():
+    print(">>> Checking for new version... <<<")
+    subs = API_URL_VERSION_CHECK
+    try:
+        r = requests.get(subs, timeout=6)
+        if r.status_code == 200:
+            js = json.loads(r.content)
+            latest_version = js['latest_version']
+            latest_msg = js["latest_msg"]
+            if latest_version == VERSION:
+                print(">>> You are running the latest version: %s <<<" % VERSION)
+                if latest_msg != '':
+                    print(latest_msg)
+            else:
+                print(">>> There is a new version available for StraxCLI: %s -> %s <<<" % (
+                VERSION, latest_version))
+                print("> Please make sure you are always running the latest version")
+                print("> You can download new releases from https://github.com/stratisproject/StraxCLI/releases")
+
+    except exceptions.RequestException:
+        print("> Could not check for new version, continuing...")
+        print("> You are running version: %s" % VERSION)
+
+
+_StraxCLIvCheck()
 StraxCLI = StraxCLI(Data.temp_mem)
 StraxCLI.cli_start()

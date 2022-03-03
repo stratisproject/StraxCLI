@@ -180,7 +180,7 @@ class StraxCLI:
     def question_sync_from_date(self):
         print("> Please fill out the fields below:")
         walletName = input("Wallet Name: ")
-        date = input("Date yy-mm-dd: ")
+        date = input("Date yyyy-mm-dd: ")
         print("< Re-syncing you transactions from %s to present." % date)
         sync_from = Node.action_sync_from_date(date, True, walletName)
         if sync_from['succes']:
@@ -195,7 +195,7 @@ class StraxCLI:
         self.input_prompt_pass()
         self.input_prompt_ph()
         walletname = input("Enter any wallet name: ")
-        creationDate = input("Creation date yy-mm-dd: ")
+        creationDate = input("Creation date yyyy-mm-dd: ")
         print("< Recovering wallet... (this can take a while)..")
         recover = Node.action_recover_wallet(mnemoic, self.temp_data['password'], self.temp_data['passphrase'],
                                              walletname, creationDate)
